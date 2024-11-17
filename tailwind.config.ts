@@ -13,6 +13,11 @@ export default {
         foreground: "var(--foreground)",
       },
     },
+    fontFamily: {
+      paperlogy: ["Paperlogy-8ExtraBold"],
+      stunning: ["STUNNING-Bd"],
+      bmjua: ["BMJUA"],
+    },
   },
   plugins: [],
 } satisfies Config;

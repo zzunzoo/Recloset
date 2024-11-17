@@ -2,8 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'Paperlogy-8ExtraBold';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2408-3@1.0/Paperlogy-8ExtraBold.woff2') format('woff2');
+  font-weight: 800;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'STUNNING-Bd';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2410-2@1.0/STUNNING-Bd.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'BMJUA';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/BMJUA.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
 :root {
-  --background: #ffffff;
+  --background: #3a3838;
   --foreground: #171717;
 }
 
@@ -28,6 +49,6 @@ body {
 
 @layer components {
   .primary-btn {
-    @apply w-full bg-stone-400 text-white  font-medium  rounded-md text-center hover:bg-stone-500 transition-colors;
+    @apply w-full bg-green-400 text-white  font-medium  rounded-md text-center hover:bg-green-500 transition-colors;
   }
 }
