@@ -7,52 +7,65 @@ import { useState } from "react";
 import { getUploadUrl, uploadProduct } from "./actions";
 import { useActionState } from "react";
 
-export default function AddProduct() {
+export default function AddProduct() {  
   const [preview, setPreview] = useState("");
   const [uploadUrl, setUploadUrl] = useState("");
   const [photoId, setPhotoId] = useState("");
-  const [price, setPrice] = useState<number>(0); // 가격 입력
-  const [size, setSize] = useState<string>(""); // 사이즈 입력
-  const [isRental, setIsRental] = useState<boolean>(false); // 렌탈 여부 선택
+  const [price, setPrice] = useState<number>(0);
+  const [rentalPrice, setRentalPrice] = useState<number>(0);
+  const [discount, setDiscount] = useState<number>(0);
+  const [productId, setProductId] = useState(() => {
+    const params = { id: window.location.pathname.split('/').pop() || '' };
+    return Number(Array.isArray(params.id) ? params.id[0] : params.id);
+  });
 
   // 이미지 변경 처리
   const onImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const params = { id: window.location.pathname.split('/').pop() || '' };
+    const productId = Number(Array.isArray(params.id) ? params.id[0] : params.id);
     const { target: { files } } = event;
     if (!files) return;
-  
+
     const file = files[0];
-    const url = URL.createObjectURL(file); // 이미지 미리보기 URL 생성
-    setPreview(url); // 프리뷰에 표시
-    const { success, result } = await getUploadUrl(); // Cloudflare 업로드 URL 요청
+    const url = URL.createObjectURL(file);
+    setPreview(url);
+    const { success, result } = await getUploadUrl();
     if (success) {
-      const { id, uploadURL } = result; // ID와 업로드 URL 가져오기
-      setUploadUrl(uploadURL); // 업로드 URL 저장
-      setPhotoId(id); // Photo ID 저장
+      const { id, uploadURL } = result;
+      setUploadUrl(uploadURL);
+      setPhotoId(id);
     }
   };
+
+  // 새상품 가격과 렌탈 가격으로 할인률 계산
+  const calculateDiscount = () => {
+    if (price > 0 && rentalPrice > 0) {
+      const discountPercentage = ((price - rentalPrice) / price) * 100;
+      setDiscount(discountPercentage);
+    }
+  };
+
   // 폼 제출 처리
   const interceptAction = async (_: any, formData: FormData) => {
     const file = formData.get("photo");
     if (!file) return;
-  
+
     const cloudflareForm = new FormData();
     cloudflareForm.append("file", file);
     const response = await fetch(uploadUrl, {
-      method: "POST",
+      method: "post",
       body: cloudflareForm,
     });
-  
+
     if (response.status !== 200) return;
-  
-    // Cloudflare에서 반환된 이미지 URL 생성
-    const photoUrl = `https://imagedelivery.net/yJM4XEUMW1iEPFK9VtyCSw/${photoId}/public`;
+    const photoUrl = `https://imagedelivery.net/yJM4XEUMW1iEPFK9VtyCSw/${photoId}`;
     formData.set("photo", photoUrl);
-  
-    // 추가적인 데이터를 폼에 설정
+
+    // 새상품 가격과 렌탈 가격을 폼 데이터에 추가
     formData.set("price", price.toString());
-    formData.set("rentalPrice", price.toString());
-  
-    return uploadProduct(formData); // 업로드 실행
+    formData.set("rentalPrice", rentalPrice.toString());
+
+    return uploadProduct(formData);
   };
 
   const [, action] = useActionState(interceptAction, null);
@@ -70,7 +83,9 @@ export default function AddProduct() {
           {preview === "" ? (
             <>
               <PhotoIcon className="w-20" />
-              <div className="text-neutral-400 text-sm">사진을 추가해주세요.</div>
+              <div className="text-neutral-400 text-sm">
+                사진을 추가해주세요.
+              </div>
             </>
           ) : null}
         </label>
@@ -85,33 +100,40 @@ export default function AddProduct() {
 
         <Input name="title" required placeholder="제목" type="text" />
 
-        {/* 가격 입력 */}
+        {/* 새상품 가격 입력 */}
         <Input
           name="price"
           type="number"
           required
-          placeholder="가격"
-          value={price || ""}
+          placeholder="새상품 가격"
+          value={price || ""}  // 가격이 0일 때는 빈 문자열로 표시
           onChange={(e) => setPrice(Number(e.target.value))}
         />
 
-        {/* 사이즈 입력 */}
         <Input
-          name="size"
-          type="text"
-          placeholder="사이즈 (예: S, M, L)"
-          value={size}
-          onChange={(e) => setSize(e.target.value)}
+          name="rentalPrice"
+          type="number"
+          required
+          placeholder="렌탈 가격"
+          value={rentalPrice || ""}  // 렌탈 가격도 0일 때 빈 문자열로 표시
+          onChange={(e) => setRentalPrice(Number(e.target.value))}
         />
 
-        
-
+        {/* 할인률 계산 */}
+        {/* <div className="mt-2 text-xl">
+          {discount > 0 && (
+            <span className="font-semibold text-green-500">
+              할인률: {discount.toFixed(2)}%
+            </span>
+          )}
+        </div> */}
         <Input
           name="description"
           type="text"
           required
           placeholder="자세한 설명"
         />
+        <input type="hidden" name="id" value={productId} />
 
         <Button text="작성 완료" />
       </form>

@@ -10,6 +10,7 @@ async function getInitialPosts() {
     select: {
       title: true,
       price: true,
+      rentalPrice: true,
       created_at: true,
       photo: true,
       id: true,
@@ -34,33 +35,20 @@ export interface InitialPosts {
 
 export default async function Home() {
   const initialPosts = await getInitialPosts();
-  const logOut = async () => {
-    "use server";
-    const session = await getSession();
-    await session.destroy();
-    redirect("/");
-  };
   return (
     <div>
       <PostList initialPosts={initialPosts} />
-    <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-screen-sm pointer-events-none">
-      <div className="relative w-full flex justify-end gap-4 px-4 pointer-events-auto">
-      <Link
-        href="/posts/add"
-        className="bg-green-500 flex items-center justify-center rounded-full size-16 fixed bottom-24 right-8 text-white transition-colors hover:bg-green-400"
-      >
-        <PlusIcon className="size-10" />
-      </Link>
-      <form action={logOut}>
-      <button
-        className="bg-green-500 flex items-center justify-center rounded-full size-16 fixed bottom-24 right-24 text-white transition-colors hover:bg-green-400"
-      >
-        로그아웃
-      </button>
-      </form>
-      
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-full pointer-events-none"> {/* max-w-full로 변경 */}
+        <div className="relative w-full flex justify-end gap-4 px-4 pointer-events-auto">
+          <Link
+            href="/posts/add"
+            className="bg-green-500 flex items-center justify-center rounded-full size-16 fixed bottom-24 right-8 text-white transition-colors hover:bg-green-400"
+          >
+            <PlusIcon className="size-10" />
+          </Link>
+        </div>
       </div>
-    </div>
     </div>
   );
 }
+  

@@ -31,5 +31,26 @@ CREATE TABLE `Product` (
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+const post = await db.post.findUnique({
+  where: { id: productId },
+  select: {
+    id: true,
+    title: true,
+    price: true,
+    rentalPrice: true,  // rentalPrice도 명시적으로 포함
+    description: true,
+    user: {
+      select: {
+        username: true,  // 작성자 이름 포함
+      },
+    },
+  },
+});
+
 -- AddForeignKey
 ALTER TABLE `Product` ADD CONSTRAINT `Product_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+-- Add rentalPrice to Product table
+ALTER TABLE `Product` ADD COLUMN `rentalPrice` INT NULL;
+
+
+

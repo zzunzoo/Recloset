@@ -20,14 +20,14 @@ export default function LogIn() {
           type="email"
           placeholder="Email"
           required
-          errors={state?.fieldErrors.email}
+          errors={state?.fieldErrors?.email}
         />
         <Input
           name="password"
           type="password"
           placeholder="Password"
           required
-          errors={state?.fieldErrors.password}
+          errors={state?.fieldErrors?.password}
         />
         <Button text="Log in" />
       </form>

@@ -10,11 +10,17 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.1.5",
+    "@types/react-slick": "^0.23.13",
     "bcrypt": "^5.1.1",
+    "install": "^0.13.0",
     "iron-session": "^8.0.4",
     "next": "15.0.3",
+    "npm": "^10.9.1",
     "react": "19.0.0-rc-66855b96-20241106",
     "react-dom": "19.0.0-rc-66855b96-20241106",
+    "react-slick": "0.29.0",
+    "slick-carousel": "^1.8.1",
+    "swiper": "^11.1.15",
     "z": "^1.0.9",
     "zod": "^3.23.8"
   },

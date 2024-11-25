@@ -27,6 +27,7 @@ model Post {
   id          Int      @id @default(autoincrement())
   title       String
   price       Float
+  rentalPrice Int? // 렌탈 가격 (옵션)
   photo       String
   description String
   created_at  DateTime @default(now())

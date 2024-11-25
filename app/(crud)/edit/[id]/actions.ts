@@ -5,6 +5,7 @@ import getSession from "@/lib/session";
 import { redirect } from "next/navigation";
 
 const PostSchema = z.object({
+  id: z.string().transform((val) => val ? parseInt(val) : undefined).optional(),
   photo: z.string({
     required_error: "사진은 필수입니다.",
   }),
@@ -21,6 +22,7 @@ const PostSchema = z.object({
 
 export async function uploadProduct(formData: FormData) {
   const data = {
+    id: formData.get("id"),
     photo: formData.get("photo"),
     title: formData.get("title"),
     price: formData.get("price"),
@@ -33,8 +35,11 @@ export async function uploadProduct(formData: FormData) {
   } else {
     const session = await getSession();
     if (session.id) {
-      const post = await db.post.create({
-        data: {
+      const post = await db.post.upsert({
+        where: {
+            id: result.data.id,
+        },
+        create: {
           title: result.data.title,
           description: result.data.description,
           price: result.data.price,
@@ -45,8 +50,16 @@ export async function uploadProduct(formData: FormData) {
             },
           },
         },
-        select: {
-          id: true,
+        update: {
+          title: result.data.title,
+          description: result.data.description,
+          price: result.data.price,
+          photo: result.data.photo,
+          user: {
+            connect: {
+              id: session.id,
+            },
+          },
         },
       });
       redirect(`/posts/${post.id}`);

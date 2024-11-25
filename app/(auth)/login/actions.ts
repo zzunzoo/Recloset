@@ -23,10 +23,10 @@ const formSchema = z.object({
     .string()
     .email()
     .toLowerCase()
-    .refine(checkEmailExits, "An account with this email does not exist."),
+    .refine(checkEmailExits, "존재하지 않는 이메일입니다."),
   password: z
     .string({
-      required_error: "Password is required",
+      required_error: "잘못된 비밀번호입니다.",
     })
     .min(4)
 });
@@ -62,7 +62,7 @@ export async function login(prevState: any, formData: FormData) {
     } else {
       return {
         fieldErrors: {
-          password: ["Wrong password."],
+          password: ["잘못된 비밀번호입니다."],
           email: [],
         },
       };

@@ -19,7 +19,7 @@ const formSchema = z
     email: z.string().email().toLowerCase(),
     password: z
       .string({
-        required_error: "Password is required",
+        required_error: "비밀번호는 필수입니다.",
       })
       .min(4),
     confirm_password: z.string().min(4),
@@ -63,7 +63,7 @@ const formSchema = z
     }
   })
   .refine(checkPasswords, {
-    message: "비밀번호가 같지 않습니다.",
+    message: "비밀번호가 다릅니다.",
     path: ["confirm_password"],
   });
 
